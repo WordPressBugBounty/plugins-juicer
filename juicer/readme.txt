@@ -3,15 +3,15 @@ Contributors: juicerio
 Tags: social media aggregator, embed social media, Instagram Feed, Social Wall, LinkedIn feed
 Donate link: https://wp.juicer.io
 Requires at least: 3.0
-Tested up to: 6.6
-Stable tag: 1.12.12
+Tested up to: 6.7
+Stable tag: 1.12.13
 License: GPLv2
 
-Aggregate social media posts and hashtags from Instagram, Twitter, Facebook, LinkedIn, YouTube, and more into a stunning feed on your website.
+Aggregate social media posts and hashtags from Instagram, X (Twitter), Facebook, LinkedIn, YouTube, and more into a stunning feed on your website.
 
 == Description ==
 
-What you can embed with Juicer? Embed Twitter feed, embed Instagram feed, embed LinkedIn feed, embed Facebook feed and many more!
+What you can embed with Juicer? Embed X (Twitter) feed, embed Instagram feed, embed LinkedIn feed, embed Facebook feed and many more!
 
 Searching for a seamless integration to showcase all your social media posts in one place?
 
@@ -19,18 +19,19 @@ Meet Juicer, the top-rated social media aggregator plugin for curating social me
 
 Juicer makes it easy to curate, embed, and aggregate a brand's hashtag and social media posts by simply entering social media account names or hashtags. It automatically retrieves the posts from these feeds and effortlessly embeds them into any of your web pages using a straightforward shortcode.
 
-The social media aggregator ensures seamless updates by automatically synchronizing these feeds whenever you create new posts for your social media accounts. With this automated process, you can be assured that your website will always reflect the latest content from your social media channels. Get ready to level up your brand's online presence by simply curating, and embedding your Twitter feed, Instagram feed, LinkedIn feed, TikTok feed, Facebook feed, and further social networks.
+The social media aggregator ensures seamless updates by automatically synchronizing these feeds whenever you create new posts for your social media accounts. With this automated process, you can be assured that your website will always reflect the latest content from your social media channels. Get ready to level up your brand's online presence by simply curating, and embedding your X (Twitter) feed, Instagram feed, LinkedIn feed, TikTok feed, Facebook feed, and further social networks.
 
 To use this plugin you must create an account on [wp.juicer.io](https://wp.juicer.io/). Then you must create a feed and add social media sources to it.
 
 Check out our introduction video to see Juicer in action:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/73CgtyVZAo8" frameborder="0" allowfullscreen></iframe>
 
-*** LinkedIn and Twitter embed is available only in Pro version.
+*** LinkedIn, X (Twitter), and Hashtags embed is available only with our Premium plans.
+
 
 = Features =
 
-* A beautiful social media feed of your social media content from many networks: Facebook, Twitter, Instagram, YouTube, Pinterest, Tumblr, RSS, Slack, LinkedIn, Flickr, Vimeo, Hashtags and Yelp.
+* A beautiful social media feed of your social media content from many networks: Facebook, X (Twitter), Instagram, YouTube, Pinterest, Tumblr, RSS, Slack, LinkedIn, Flickr, Vimeo and Hashtags.
 * Gather your content by @username or #hashtag
 * Setup rules & filters to automatically eliminate unwanted content retweets and duplicate posts.
 * Moderate and remove your social media content with one click.
@@ -49,9 +50,9 @@ Visit [wp.juicer.io](https://wp.juicer.io) for more information
 
 * **[Embed Instagram](https://www.juicer.io/blog/embed-instagram-feed-on-website?utm_source=wordpress_plugin_directory&utm_medium=referral)**: Easily create a stunning Instagram feed on your WordPress website with Juicer. Engage your audience with content collected straight from your Instagram profile, and keep your customers up to date on your latest news.
 * **[Embed Instagram Reels](https://www.juicer.io/blog/embed-instagram-reels-on-website?utm_source=wordpress_plugin_directory&utm_medium=referral)**: Take advantage of the latest Instagram trend by showcasing your Instagram Reels on your WP site. You can aggregate Reels based on a specific hashtag, and moderate the video content you share.
-* **[Embed LinkedIn](https://www.juicer.io/blog/embed-linkedin-feed-on-website?utm_source=wordpress_plugin_directory&utm_medium=referral)**: **(Available with paid subscriptions)** Showcase your thought leadership and appeal to your B2B audience with a LinkedIn feed on your blog or business website. Embed all kinds of text, video, and other content straight into your site with Juicer.
+* **[Embed LinkedIn](https://www.juicer.io/blog/embed-linkedin-feed-on-website?utm_source=wordpress_plugin_directory&utm_medium=referral)**: **(Available with paid plans)** Showcase your thought leadership and appeal to your B2B audience with a LinkedIn feed on your blog or business website. Embed all kinds of text, video, and other content straight into your site with Juicer.
 * **[Embed TikTok](https://www.juicer.io/blog/how-to-embed-tiktok-video-feed?utm_source=wordpress_plugin_directory&utm_medium=referral)**: Stay on the cutting edge of the social media market with posts taken straight from TikTok for your WordPress site. You can add as many fast-paced and engaging videos as you like, and show your company’s human side.
-* **[Embed Twitter](https://www.juicer.io/blog/embed-twitter-feed-on-website?utm_source=wordpress_plugin_directory&utm_medium=referral)**: **(Available with paid plans)**: Share news, updates, and information quickly and easily on your own custom social wall. You can post entire Twitter feeds automatically onto your blog and website pages with Juicer’s convenient technology.
+* **[Embed X (Twitter)](https://www.juicer.io/blog/embed-twitter-feed-on-website?utm_source=wordpress_plugin_directory&utm_medium=referral)**: **(Available with paid plans)**: Share news, updates, and information quickly and easily on your own custom social wall. You can post entire X (Twitter) feeds automatically onto your blog and website pages with Juicer’s convenient technology.
 * **[Embed Facebook](https://www.juicer.io/blog/embed-facebook-feed-on-website?utm_source=wordpress_plugin_directory&utm_medium=referral)**: Reach the widest audience online for social media with our Facebook embed for any WP website. Embed your latest posts into your blog, your own custom social media wall, or your business home page.
 * **Embed YouTube**: Collect more subscribers for your YouTube channel by embedding your best videos automatically onto your WordPress website. The Juicer app will instantly integrate your YouTube videos into an attractive playlist for your audience to enjoy.
 * **Embed Tumblr**: Share blog posts, content, and more from Tumblr with your own dedicated social feed. Encourage your customers to spend more time on your business website with engaging, informative, and useful posts, specific to your brand.
@@ -59,11 +60,10 @@ Visit [wp.juicer.io](https://wp.juicer.io) for more information
 * **Embed Slack**: Highlight your collaborative content with the Juicer integration for Slack. Ideal for building a community around your business, this integration will help to showcase your latest posts and content straight from your Slack page.
 * **Embed Flickr**: Running a photography website or a company with a strong focus on visuals? Enhance your website with our Flickr embed. You can pull high-quality photos straight from your Flickr account into any part of your website, including your blog.
 * **Embed Vimeo**: Share powerful video content on your website homepage or blog with the Vimeo integration for Juicer. You’ll have complete control over which videos you want to include on your video site, and how you want them to look.
-* **Embed Yelp**: Discover the power of social proof with reviews and testimonials from customers on Yelp displayed on your website. Show customers the trustworthy and credible site of your business with attractive rating scores.
 * **Embed Giphy**: Have fun with animated GIFs that highlight the personality of your brand, and draw attention to your blogs and social media walls. Juicer works directly with Giphy to give you access to all the animations you need.
 * **Embed Soundcloud**: Want to share your latest podcasts or musical creations? Leverage Juicer to bring a Soundcloud playlist into your website. You’ll be able to share all of your favorite audio quickly and easily, with no coding.
 * **Embed Blog RSS**: Highlight your most recent blog posts and encourage customers to sign up for your newsletter subscription with our blog RSS integration. Get more eyes on your most relevant content instantly.
-* **Embed Hashtags**: Showcase hashtag content from a range of social media channels, to highlight relevant branded tags and industry-focused terms. You can monitor and control all of the content you want to share easily.
+* **Embed Hashtags**: **(Available with paid plans)**: Showcase hashtag content from a range of social media channels, to highlight relevant branded tags and industry-focused terms. You can monitor and control all of the content you want to share easily.
 
 = Benefits of Juicer Social Media Aggregator =
 Juicer is a streamlined, straightforward, and powerful tool for social media aggregation. The convenient low-code environment makes it easy for any business owner to create stunning, customized social media walls and feeds for their WordPress websites. Juicer helps businesses make the most out of their social media content with benefits like:
@@ -84,7 +84,7 @@ There are plenty of ways to get in touch. You can contact us directly through ou
 
 We’re always looking for ways to improve the Juicer experience. We’d love to hear from you about your interactions with the WordPress plugin, so please reach out with your feedback and reviews. You can get in touch to request new features, and follow Juicer on your social platforms for updates on the latest features, rollouts, and news.
 
-= What are the Benefits of Our Pro Plans? =
+= What are the Benefits of Our Premium Plans? =
 
 Want to take your Juicer experience to the next level? Invest in one of our high-value premium plans. Juicer premium plans are available for a range of business types and budgets, so you can find something specific to suit your needs. With Juicer premium plans you can:
 * **Embed more feeds**: Connect more social media accounts to your online feed, so you can share insights from multiple channels in one location.
@@ -188,6 +188,9 @@ Make sure that all Javascript errors are resolved.
 
 
 == Changelog ==
+
+= 1.12.13 =
+* Improved setup guide
 
 = 1.12.12 =
 * Fixed issues with shortcode rendering in Elementor.

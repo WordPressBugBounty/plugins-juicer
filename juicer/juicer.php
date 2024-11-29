@@ -3,7 +3,7 @@
  * Plugin Name: Juicer
  * Plugin URI: https://wp.juicer.io
  * Description: Embed, curate & aggregate social media feeds from Instagram, Twitter, TikTok, Facebook, LinkedIn, YouTube, Slack, etc. and customize them as you like.
- * Version: 1.12.12
+ * Version: 1.12.13
  * Author: saas.group Inc.
  * Author URI: https://saas.group
  * License: GPLv2 or later
@@ -25,7 +25,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('JUICER_VERSION', '1.12.12');
+define('JUICER_VERSION', '1.12.13');
 
 class Juicer_Feed {
     public function render($args) {

@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Make a request to the API endpoint
 $host_url = home_url();
 $response = wp_remote_get('https://www.juicer.io/api/hosts?hostname='. $host_url);
+$response_cta = wp_remote_get('https://www.juicer.io/api/hosts/cta?hostname='. $host_url);
 
 $feedExists = false;
 
@@ -41,6 +42,21 @@ if (!is_wp_error($response)) {
       }
   }
 }
+
+// Check if the CTA request was successful
+if (!is_wp_error($response_cta)) {
+
+  // Get the response code for CTA
+  $response_cta_code = wp_remote_retrieve_response_code($response_cta);
+
+  // Check if the response code is not 404 (Not Found)
+  if ($response_cta_code !== 404) {
+
+      $body_cta = wp_remote_retrieve_body($response_cta);
+      $cta_data = json_decode($body_cta, true);
+  }
+}
+
 ?>
 
 <div class="juicer-header">
@@ -130,7 +146,14 @@ if (!is_wp_error($response)) {
         <span class="code-copy-tooltip">Copied</span>
       </div>
     </div>
-    
+
+    <?php if ( did_action( 'elementor/loaded' ) ) : ?>
+      <div class="juicer-widget juicer-widget__elementor-setup">
+        <img src="<?php echo plugin_dir_url( __FILE__ ) ?>img/wp-elementor-icon.svg" height="40" width="40" >
+        <p>Using Elementor, you can easily add your Juicer feed using the Juicer feed widget. This allows for easy drag-and-drop integration directly from the Elementor editor.</p>
+      </div>
+    <?php endif; ?>
+
     <div class="juicer-widget">
       <p>If you prefer, you can also use the following PHP snippet to add the feed to your template.</p>
       <div class="juicer-code-wrapper">
@@ -142,6 +165,30 @@ if (!is_wp_error($response)) {
   </div>
   
   <div class="juicer-column-1-3">
+    <!-- CTA block start -->
+    <?php if (isset($cta_data['show']) && $cta_data['show']) : ?>
+      <div class="juicer-cta-widget">
+          <p class="juicer-promotion"><img class="juicer-cta-widget__juicer-promotion__icon" src="<?php echo plugin_dir_url( __FILE__ ) ?>img/wp-lightning-icon.svg" height="16" width="16" > <?php echo $cta_data['promotion']; ?></p>
+          <h2 class="juicer-cta-widget__headline"><?php echo $cta_data['headline_text']; ?></h2>
+          <p class="juicer-cta-widget__subheadline"><?php echo $cta_data['sub_headline_text']; ?></p>
+          <ul class="juicer-cta-widget__features">
+              <?php foreach ($cta_data['features'] as $feature) : ?>
+                  <li class="<?php echo $feature['icon'] == 'checkmark' ? 'feature-checkmark' : 'feature-cross'; ?>">
+                      <?php echo $feature['text']; ?>
+                  </li>
+              <?php endforeach; ?>
+          </ul>
+          <div class="juicer-cta-widget__buttons">
+              <?php foreach ($cta_data['buttons'] as $button) : ?>
+                  <a href="<?php echo $button['link']; ?>" class="juicer-btn <?php echo $button['style']; ?>">
+                      <?php echo $button['text']; ?>
+                  </a>
+              <?php endforeach; ?>
+          </div>
+      </div>
+    <?php endif; ?>
+    <!-- CTA block end -->
+
     <a href="#" class="juicer-widget link juicer-review-link">
       <div class="juicer-widget__title">
         <img class="juicer-widget__icon" src="<?php echo plugin_dir_url( __FILE__ ) ?>img/wp-rating-icon.svg" height="24" width="24" >

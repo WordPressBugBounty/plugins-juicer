@@ -96,6 +96,12 @@
 .juicer-widget a:hover {
   text-decoration: underline;
 }
+.juicer-widget__elementor-setup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
 .juicer-code-wrapper {
   position: relative;
   display: inline-flex;
@@ -365,4 +371,109 @@
 #juicer-love-it img {
   margin-bottom: -3px;
 }
+
+/* CTA block*/
+.juicer-cta-widget {
+  background-color: #ffffff;
+  border: 2px solid #4AB890;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  margin-right: 20px;
+  max-width: 600px;
+}
+
+.juicer-promotion {
+  display: inline-flex;
+  padding: 6px 10px 6px 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  border-radius: 20px;
+  background: rgba(252, 183, 9, 0.15);
+  font-size: 12px;
+  vertical-align: middle;
+  align-content: center;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.juicer-cta-widget__headline,
+.juicer-cta-widget__subheadline {
+  color: #102738;
+  font-size: 26px;
+  line-height: 34px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.juicer-cta-widget__features {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 32px 0;
+}
+
+.juicer-cta-widget__features li {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.feature-checkmark::before {
+  content: '';
+  background: url('../img/wp-checkmark-icon.svg');
+  display: inline-block;
+  height: 14px;
+  width: 14px;
+  margin: 0px 2px 0px 2px;
+  vertical-align: middle;
+}
+
+.feature-cross::before {
+  content: '';
+  background: url('../img/wp-cross-icon.svg');
+  display: inline-block;
+  height: 14px;
+  width: 14px;
+  margin: 0px 2px 0px 2px;
+  vertical-align: middle;
+}
+
+.juicer-cta-widget__buttons {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.juicer-btn {
+  display: block;
+  padding: 13px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: semibold;
+  transition: background-color 0.3s;
+  font-size: 16px;
+  text-align: center;
+}
+
+.juicer-btn.green {
+  background-color: #4AB890;
+  color: white;
+}
+
+.juicer-btn.green:hover {
+  background-color: #3c9c79;
+}
+
+.juicer-btn.dark {
+  background-color: #102738;
+  color: white;
+}
+
+.juicer-btn.dark:hover {
+  background-color: #0a1a27;
+}
+
 
