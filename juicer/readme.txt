@@ -3,8 +3,8 @@ Contributors: juicerio
 Tags: social media aggregator, embed social media, Instagram Feed, Social Wall, LinkedIn feed
 Donate link: https://wp.juicer.io
 Requires at least: 3.0
-Tested up to: 6.7
-Stable tag: 1.12.13
+Tested up to: 6.8.2
+Stable tag: 1.12.14
 License: GPLv2
 
 Aggregate social media posts and hashtags from Instagram, X (Twitter), Facebook, LinkedIn, YouTube, and more into a stunning feed on your website.
@@ -33,6 +33,7 @@ Check out our introduction video to see Juicer in action:
 
 * A beautiful social media feed of your social media content from many networks: Facebook, X (Twitter), Instagram, YouTube, Pinterest, Tumblr, RSS, Slack, LinkedIn, Flickr, Vimeo and Hashtags.
 * Gather your content by @username or #hashtag
+* Call-to-action (CTA): Boost engagement with Call-to-Action buttons on your posts by driving visitors to your shop, blog, event page, or any custom link.
 * Setup rules & filters to automatically eliminate unwanted content retweets and duplicate posts.
 * Moderate and remove your social media content with one click.
 * Permalinks to each of your social media posts, optimized for SEO.
@@ -188,6 +189,9 @@ Make sure that all Javascript errors are resolved.
 
 
 == Changelog ==
+
+= 1.12.14 =
+* Improved security and cookie settings
 
 = 1.12.13 =
 * Improved setup guide

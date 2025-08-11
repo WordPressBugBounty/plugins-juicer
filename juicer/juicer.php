@@ -3,7 +3,7 @@
  * Plugin Name: Juicer
  * Plugin URI: https://wp.juicer.io
  * Description: Embed, curate & aggregate social media feeds from Instagram, Twitter, TikTok, Facebook, LinkedIn, YouTube, Slack, etc. and customize them as you like.
- * Version: 1.12.13
+ * Version: 1.12.14
  * Author: saas.group Inc.
  * Author URI: https://saas.group
  * License: GPLv2 or later
@@ -25,7 +25,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('JUICER_VERSION', '1.12.13');
+define('JUICER_VERSION', '1.12.14');
 
 class Juicer_Feed {
     public function render($args) {
@@ -78,9 +78,9 @@ function juicer_feed($args) {
 }
 
 function juicer_shortcode($args) {
-    extract(shortcode_atts(array(
+    $args = shortcode_atts(array(
        'name' => 'error',
-    ), $args ) );
+    ), $args );
 
     $feed = new Juicer_Feed();
     return $feed->render($args);
@@ -89,7 +89,10 @@ add_shortcode('juicer', 'juicer_shortcode');
 
 
 function juicer_activate() {
-    setcookie('juicer_welcome', 'true', time() + 3600, '/'); // Cookie expires in 1 hour
+    // Only set cookie if headers haven't been sent
+    if (!headers_sent()) {
+        setcookie('juicer_welcome', 'true', time() + 3600, '/'); // Cookie expires in 1 hour
+    }
 }
 register_activation_hook(__FILE__, 'juicer_activate');
 
