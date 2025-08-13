@@ -4,7 +4,7 @@ Tags: social media aggregator, embed social media, Instagram Feed, Social Wall, 
 Donate link: https://wp.juicer.io
 Requires at least: 3.0
 Tested up to: 6.8.2
-Stable tag: 1.12.14
+Stable tag: 1.12.16
 License: GPLv2
 
 Aggregate social media posts and hashtags from Instagram, X (Twitter), Facebook, LinkedIn, YouTube, and more into a stunning feed on your website.
@@ -189,6 +189,12 @@ Make sure that all Javascript errors are resolved.
 
 
 == Changelog ==
+
+= 1.12.16 =
+* Fixed a bug with attributes
+
+= 1.12.15 =
+* Fixed a bug with attributes
 
 = 1.12.14 =
 * Improved security and cookie settings
