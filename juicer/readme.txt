@@ -1,17 +1,17 @@
 === Juicer.io: Effortlessly embed, curate, and aggregate social media feeds into your website ===
 Contributors: juicerio
-Tags: social media aggregator, embed social media, Instagram Feed, Social Wall, LinkedIn feed
+Tags: social media aggregator, embed social media, Instagram Feed, Social Wall, LinkedIn feed, Bluesky feed, Google Reviews
 Donate link: https://wp.juicer.io
 Requires at least: 3.0
 Tested up to: 6.8.2
-Stable tag: 1.12.16
+Stable tag: 1.12.17
 License: GPLv2
 
-Aggregate social media posts and hashtags from Instagram, X (Twitter), Facebook, LinkedIn, YouTube, and more into a stunning feed on your website.
+Aggregate social media posts, hashtags, and mentions from Instagram, Bluesky, X (Twitter), Facebook, LinkedIn, YouTube, Google Reviews, and more into a stunning feed on your website.
 
 == Description ==
 
-What you can embed with Juicer? Embed X (Twitter) feed, embed Instagram feed, embed LinkedIn feed, embed Facebook feed and many more!
+What you can embed with Juicer? Embed Bluesky feed, embed Instagram feed, embed X (Twitter) feed, embed LinkedIn feed, embed Facebook feed, embed Google Reviews, and many more!
 
 Searching for a seamless integration to showcase all your social media posts in one place?
 
@@ -31,8 +31,9 @@ Check out our introduction video to see Juicer in action:
 
 = Features =
 
-* A beautiful social media feed of your social media content from many networks: Facebook, X (Twitter), Instagram, YouTube, Pinterest, Tumblr, RSS, Slack, LinkedIn, Flickr, Vimeo and Hashtags.
-* Gather your content by @username or #hashtag
+* A beautiful social media feed of your social media content from many networks: Facebook, X (Twitter), Instagram, Bluesky, YouTube, Pinterest, Tumblr, RSS, Slack, LinkedIn, Flickr, Vimeo, Google Reviews and Hashtags.
+* Gather your content by @username, #hashtag, or @mentions across supported networks.
+* Juicer Pages: turn your feed into a fully hosted, always-up-to-date landing page — perfect for campaigns, events, or link-in-bio use, with no extra tools required.
 * Call-to-action (CTA): Boost engagement with Call-to-Action buttons on your posts by driving visitors to your shop, blog, event page, or any custom link.
 * Setup rules & filters to automatically eliminate unwanted content retweets and duplicate posts.
 * Moderate and remove your social media content with one click.
@@ -49,6 +50,8 @@ Visit [wp.juicer.io](https://wp.juicer.io) for more information
 
 = Supported Platforms to Embed Feed: =
 
+* **Embed Bluesky**: Collect posts from Bluesky by username, hashtag, or mentions and surface them in your Juicer feed. Perfect for tracking conversations and mentions as the Bluesky network continues to grow.
+* **Embed Google Reviews**: Bring real customer reviews directly into your Juicer feed, with star ratings and review text that build trust alongside your social content.
 * **[Embed Instagram](https://www.juicer.io/blog/embed-instagram-feed-on-website?utm_source=wordpress_plugin_directory&utm_medium=referral)**: Easily create a stunning Instagram feed on your WordPress website with Juicer. Engage your audience with content collected straight from your Instagram profile, and keep your customers up to date on your latest news.
 * **[Embed Instagram Reels](https://www.juicer.io/blog/embed-instagram-reels-on-website?utm_source=wordpress_plugin_directory&utm_medium=referral)**: Take advantage of the latest Instagram trend by showcasing your Instagram Reels on your WP site. You can aggregate Reels based on a specific hashtag, and moderate the video content you share.
 * **[Embed LinkedIn](https://www.juicer.io/blog/embed-linkedin-feed-on-website?utm_source=wordpress_plugin_directory&utm_medium=referral)**: **(Available with paid plans)** Showcase your thought leadership and appeal to your B2B audience with a LinkedIn feed on your blog or business website. Embed all kinds of text, video, and other content straight into your site with Juicer.
@@ -190,8 +193,8 @@ Make sure that all Javascript errors are resolved.
 
 == Changelog ==
 
-= 1.12.16 =
-* Fixed a bug with attributes
+= 1.12.17 =
+* Fixed Elementor 4.0.2 editor conflict that froze the widget Style panel by scoping daterangepicker assets to pages that use the Juicer widget.
 
 = 1.12.15 =
 * Fixed a bug with attributes

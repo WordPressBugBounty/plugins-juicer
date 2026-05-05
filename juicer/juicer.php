@@ -3,7 +3,7 @@
  * Plugin Name: Juicer
  * Plugin URI: https://wp.juicer.io
  * Description: Embed, curate & aggregate social media feeds from Instagram, Twitter, TikTok, Facebook, LinkedIn, YouTube, Slack, etc. and customize them as you like.
- * Version: 1.12.16
+ * Version: 1.12.17
  * Author: saas.group Inc.
  * Author URI: https://saas.group
  * License: GPLv2 or later
@@ -25,7 +25,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('JUICER_VERSION', '1.12.16');
+define('JUICER_VERSION', '1.12.17');
 
 class Juicer_Feed {
     public function render($args) {
@@ -33,21 +33,48 @@ class Juicer_Feed {
             'name' => 'error',
         );
         $args = wp_parse_args($args, $defaults);
+        $name = $args['name'];
 
+        // Legacy backbone feeds load embed-no-jquery.js, which still references
+        // jQuery (the "nojquery" flag means "don't bundle it, use the page's
+        // jQuery"). Keep jQuery enqueued so themes that don't load it on every
+        // page still get it when the shortcode runs. Feed 2.0 doesn't need it
+        // but enqueueing is idempotent and other plugins/themes typically load
+        // jQuery anyway.
+        wp_enqueue_script('jquery');
+
+        // Output <div> + <script> inline at the shortcode position rather than
+        // enqueueing the embed script. wp_enqueue_script dedups by handle, so
+        // two shortcodes for the same feed name collide and the second
+        // invocation's attributes (e.g. filter=Instagram on the second segment)
+        // are dropped. Emitting the pair adjacently makes each shortcode
+        // self-contained and immune to handle collisions, footer placement,
+        // and optimization plugins that reorder enqueued scripts.
         $map_attributes = generate_attributes($args);
-
         $attributes = join('&', $map_attributes);
 
-        wp_enqueue_script('jquery');
-        wp_enqueue_script(
-            'juicerembed-' . $args['name'],
-            '//www.juicer.io/embed/' . $args['name'] . '/wp-plugin-1-12.js?nojquery=true&' . $attributes,
-            array('jquery'),
-            false,
-            true
-        );
+        // Mirror args as data-* on the div so the embed JS can recover
+        // per-instance config even if a caching plugin moves the <script> tag.
+        $div_data_attrs = '';
+        foreach ($args as $key => $val) {
+            if ($key === 'name') continue;
+            $escaped_val = htmlspecialchars($val);
+            if ($escaped_val === '') continue;
+            $clean_key = str_replace('data-', '', $key);
+            $div_data_attrs .= ' data-' . esc_attr($clean_key) . '="' . esc_attr($val) . '"';
+        }
 
-        return '<div class="juicer-feed" data-feed-id="' . htmlspecialchars($args['name']) . '"></div>';
+        $script_url = '//www.juicer.io/embed/' . rawurlencode($name)
+                    . '/wp-plugin-1-12.js?nojquery=true'
+                    . ($attributes !== '' ? '&' . $attributes : '');
+
+        return sprintf(
+            '<div class="juicer-feed" data-feed-id="%s"%s></div>'
+          . '<script type="text/javascript" src="%s"></script>',
+            esc_attr($name),
+            $div_data_attrs,
+            esc_url($script_url)
+        );
     }
 }
 
@@ -263,11 +290,56 @@ function enqueue_juicer_elementor_editor_styles() {
 add_action('elementor/frontend/after_enqueue_styles', 'enqueue_juicer_elementor_editor_styles');
 add_action('elementor/editor/after_enqueue_styles', 'enqueue_juicer_elementor_editor_styles');
 
-function enqueue_daterangepicker() {
-    wp_enqueue_script('moment-js', 'https://cdn.jsdelivr.net/momentjs/latest/moment.min.js', array(), '2.29.1', true);
-    wp_enqueue_script('daterangepicker', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', array('jquery', 'moment-js'), '3.1', true);
-    wp_enqueue_style('daterangepicker-css', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css', array(), '3.1');
-    wp_enqueue_script('juicer-daterangepicker-init', plugin_dir_url(__FILE__) . 'includes/elementor/daterangepicker-init.js', array('jquery', 'daterangepicker'), '1.0', true);
+function juicer_register_daterangepicker_assets() {
+    if (wp_script_is('daterangepicker', 'registered')) {
+        return;
+    }
+    wp_register_script('daterangepicker', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', array('jquery', 'moment'), '3.1', true);
+    wp_register_style('daterangepicker-css', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css', array(), '3.1');
+    wp_register_script('juicer-daterangepicker-init', plugin_dir_url(__FILE__) . 'includes/elementor/daterangepicker-init.js', array('jquery', 'daterangepicker'), JUICER_VERSION, true);
 }
-add_action('elementor/editor/after_enqueue_scripts', 'enqueue_daterangepicker');
+add_action('elementor/editor/before_enqueue_scripts', 'juicer_register_daterangepicker_assets');
+add_action('elementor/frontend/before_enqueue_scripts', 'juicer_register_daterangepicker_assets');
+
+function juicer_editor_has_juicer_widget() {
+    if (!isset($_GET['post']) || !function_exists('\Elementor\Plugin::instance')) {
+        return false;
+    }
+    $post_id = absint($_GET['post']);
+    if (!$post_id) {
+        return false;
+    }
+    $document = \Elementor\Plugin::instance()->documents->get($post_id);
+    if (!$document) {
+        return false;
+    }
+    $data = $document->get_elements_data();
+    return juicer_find_widget_in_data($data, 'juicer_widget');
+}
+
+function juicer_find_widget_in_data($elements, $widget_type) {
+    if (!is_array($elements)) {
+        return false;
+    }
+    foreach ($elements as $element) {
+        if (isset($element['widgetType']) && $element['widgetType'] === $widget_type) {
+            return true;
+        }
+        if (!empty($element['elements']) && juicer_find_widget_in_data($element['elements'], $widget_type)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function juicer_enqueue_daterangepicker_in_editor() {
+    if (!juicer_editor_has_juicer_widget()) {
+        return;
+    }
+    wp_enqueue_script('moment');
+    wp_enqueue_script('daterangepicker');
+    wp_enqueue_style('daterangepicker-css');
+    wp_enqueue_script('juicer-daterangepicker-init');
+}
+add_action('elementor/editor/after_enqueue_scripts', 'juicer_enqueue_daterangepicker_in_editor');
 ?>
