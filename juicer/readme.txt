@@ -3,8 +3,8 @@ Contributors: juicerio
 Tags: social media aggregator, embed social media, Instagram Feed, Social Wall, LinkedIn feed, Bluesky feed, Google Reviews
 Donate link: https://wp.juicer.io
 Requires at least: 3.0
-Tested up to: 6.8.2
-Stable tag: 1.12.17
+Tested up to: 7.0
+Stable tag: 1.12.18
 License: GPLv2
 
 Aggregate social media posts, hashtags, and mentions from Instagram, Bluesky, X (Twitter), Facebook, LinkedIn, YouTube, Google Reviews, and more into a stunning feed on your website.
@@ -192,6 +192,9 @@ Make sure that all Javascript errors are resolved.
 
 
 == Changelog ==
+
+= 1.12.18 =
+* Confirmed compatibility with WordPress 7.0.
 
 = 1.12.17 =
 * Fixed Elementor 4.0.2 editor conflict that froze the widget Style panel by scoping daterangepicker assets to pages that use the Juicer widget.
