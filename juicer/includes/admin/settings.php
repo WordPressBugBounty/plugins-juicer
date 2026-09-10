@@ -10,6 +10,8 @@ $response = wp_remote_get('https://www.juicer.io/api/hosts?hostname='. $host_url
 $response_cta = wp_remote_get('https://www.juicer.io/api/hosts/cta?hostname='. $host_url);
 
 $feedExists = false;
+// Initialised unconditionally: the render below counts it even when the API call fails.
+$uniqueFeeds = [];
 
 // Check if the request was successful
 if (!is_wp_error($response)) {
@@ -22,23 +24,25 @@ if (!is_wp_error($response)) {
         
       $body = wp_remote_retrieve_body($response);
       $data = json_decode($body, true);
-      
-      $uniqueFeeds = [];
 
-      // Check if "feed_id" exists in the response
-      foreach ($data as $item) {
-        if (isset($item['feed_id'])) {
+      // json_decode returns null on malformed JSON, and individual entries are not
+      // guaranteed to carry both keys, so both are checked before being read.
+      if (is_array($data)) {
+        foreach ($data as $item) {
+            // is_scalar as well as isset: feed_id is used as an array key below, and a
+            // non-scalar there is a TypeError rather than a warning.
+            if (!is_array($item) || !isset($item['feed_id']) || !is_scalar($item['feed_id'])) {
+                continue;
+            }
             $feedExists = true;
-            break;
+
+            // The slug is only needed for the list of feed names, so an entry without one
+            // still counts as a feed but contributes no name.
+            if (isset($item['feed_slug']) && is_scalar($item['feed_slug'])
+                && !array_key_exists($item['feed_id'], $uniqueFeeds)) {
+                $uniqueFeeds[$item['feed_id']] = $item['feed_slug'];
+            }
         }
-      }
-      foreach ($data as $item) {
-          $feedId = $item['feed_id'];
-          $feedSlug = $item['feed_slug'];
-          
-          if (!array_key_exists($feedId, $uniqueFeeds)) {
-              $uniqueFeeds[$feedId] = $feedSlug;
-          }
       }
   }
 }
@@ -168,22 +172,28 @@ if (!is_wp_error($response_cta)) {
     <!-- CTA block start -->
     <?php if (isset($cta_data['show']) && $cta_data['show']) : ?>
       <div class="juicer-cta-widget">
-          <p class="juicer-promotion"><img class="juicer-cta-widget__juicer-promotion__icon" src="<?php echo plugin_dir_url( __FILE__ ) ?>img/wp-lightning-icon.svg" height="16" width="16" > <?php echo $cta_data['promotion']; ?></p>
-          <h2 class="juicer-cta-widget__headline"><?php echo $cta_data['headline_text']; ?></h2>
-          <p class="juicer-cta-widget__subheadline"><?php echo $cta_data['sub_headline_text']; ?></p>
+          <p class="juicer-promotion"><img class="juicer-cta-widget__juicer-promotion__icon" src="<?php echo plugin_dir_url( __FILE__ ) ?>img/wp-lightning-icon.svg" height="16" width="16" > <?php echo isset($cta_data['promotion']) ? $cta_data['promotion'] : ''; ?></p>
+          <h2 class="juicer-cta-widget__headline"><?php echo isset($cta_data['headline_text']) ? $cta_data['headline_text'] : ''; ?></h2>
+          <p class="juicer-cta-widget__subheadline"><?php echo isset($cta_data['sub_headline_text']) ? $cta_data['sub_headline_text'] : ''; ?></p>
           <ul class="juicer-cta-widget__features">
-              <?php foreach ($cta_data['features'] as $feature) : ?>
-                  <li class="<?php echo $feature['icon'] == 'checkmark' ? 'feature-checkmark' : 'feature-cross'; ?>">
-                      <?php echo $feature['text']; ?>
+              <?php if (!empty($cta_data['features']) && is_array($cta_data['features'])) : ?>
+                <?php foreach ($cta_data['features'] as $feature) : ?>
+                  <?php if (!is_array($feature)) { continue; } ?>
+                  <li class="<?php echo isset($feature['icon']) && $feature['icon'] == 'checkmark' ? 'feature-checkmark' : 'feature-cross'; ?>">
+                      <?php echo isset($feature['text']) ? $feature['text'] : ''; ?>
                   </li>
-              <?php endforeach; ?>
+                <?php endforeach; ?>
+              <?php endif; ?>
           </ul>
           <div class="juicer-cta-widget__buttons">
-              <?php foreach ($cta_data['buttons'] as $button) : ?>
-                  <a href="<?php echo $button['link']; ?>" class="juicer-btn <?php echo $button['style']; ?>">
-                      <?php echo $button['text']; ?>
+              <?php if (!empty($cta_data['buttons']) && is_array($cta_data['buttons'])) : ?>
+                <?php foreach ($cta_data['buttons'] as $button) : ?>
+                  <?php if (!is_array($button)) { continue; } ?>
+                  <a href="<?php echo isset($button['link']) ? $button['link'] : ''; ?>" class="juicer-btn <?php echo isset($button['style']) ? $button['style'] : ''; ?>">
+                      <?php echo isset($button['text']) ? $button['text'] : ''; ?>
                   </a>
-              <?php endforeach; ?>
+                <?php endforeach; ?>
+              <?php endif; ?>
           </div>
       </div>
     <?php endif; ?>

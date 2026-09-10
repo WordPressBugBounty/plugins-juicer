@@ -3,7 +3,9 @@
  * Plugin Name: Juicer
  * Plugin URI: https://wp.juicer.io
  * Description: Embed, curate & aggregate social media feeds from Instagram, Twitter, TikTok, Facebook, LinkedIn, YouTube, Slack, etc. and customize them as you like.
- * Version: 1.12.18
+ * Version: 1.13.0
+ * Requires at least: 4.6
+ * Requires PHP: 5.6
  * Author: saas.group Inc.
  * Author URI: https://saas.group
  * License: GPLv2 or later
@@ -25,7 +27,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-define('JUICER_VERSION', '1.12.18');
+define('JUICER_VERSION', '1.13.0');
 
 class Juicer_Feed {
     public function render($args) {
@@ -34,6 +36,18 @@ class Juicer_Feed {
         );
         $args = wp_parse_args($args, $defaults);
         $name = $args['name'];
+
+        // Validated here rather than at either output site because both of them carry it:
+        // the embed script is enabled by the query-string copy but runs the copy it reads
+        // back off the div's data-after attribute. This is also the only guard on the
+        // [juicer] path -- the Elementor widget sanitizes its own settings, but a
+        // shortcode written straight into post content reaches this point unfiltered.
+        if (isset($args['after'])) {
+            $args['after'] = juicer_sanitize_after_callback($args['after']);
+            if ($args['after'] === '') {
+                unset($args['after']);
+            }
+        }
 
         // Legacy backbone feeds load embed-no-jquery.js, which still references
         // jQuery (the "nojquery" flag means "don't bundle it, use the page's
@@ -64,8 +78,13 @@ class Juicer_Feed {
             $div_data_attrs .= ' data-' . esc_attr($clean_key) . '="' . esc_attr($val) . '"';
         }
 
+        // The path segment is the request origin the Juicer app records for tracking; it
+        // follows the plugin's major.minor version (1.13 -> wp-plugin-1-13). The app keeps
+        // an allow-list of these origins (PAGE_URL_ORIGINS in juicer-io/juicer) and files
+        // any it does not recognise under "invalid", so a new value here must be added to
+        // that list and deployed before this ships, or the traffic it labels is lost.
         $script_url = '//www.juicer.io/embed/' . rawurlencode($name)
-                    . '/wp-plugin-1-12.js?nojquery=true'
+                    . '/wp-plugin-1-13.js?nojquery=true'
                     . ($attributes !== '' ? '&' . $attributes : '');
 
         return sprintf(
@@ -78,6 +97,39 @@ class Juicer_Feed {
     }
 }
 
+// The embed script evaluates this value as a function *body*, not as a name it looks up,
+// so it is the one feed attribute that becomes executable code on the visitor's page.
+// A call is therefore the form that has always done anything: a bare name on its own is
+// an expression statement that never invokes.
+//
+// Accepted: an optionally dotted name, optionally called with no argument or with the
+// callback's own 'event' -- myCallback, myCallback(), window.MyApp.render(event).
+//
+// The argument list is restricted to 'event' rather than to identifiers generally,
+// because 'new Function' resolves every other identifier against the global scope:
+// permitting them would accept alert(document.cookie) as readily as myCallback(event).
+// With this restriction a value can name a function the page already defines and hand it
+// the event, and cannot express anything else.
+//
+// Bare names stay accepted because they have always been emitted and rejecting them would
+// change working pages; as a function body they remain the no-ops they have always been.
+function juicer_sanitize_after_callback($value) {
+    if (!is_string($value)) {
+        return '';
+    }
+    $identifier = '[A-Za-z_$][A-Za-z0-9_$]*';
+    $name = $identifier . '(?:\.' . $identifier . ')*';
+    $pattern = '/^' . $name . '(?:\s*\(\s*(?:event)?\s*\))?\s*;?$/';
+    $value = trim($value);
+
+    return preg_match($pattern, $value) ? $value : '';
+}
+
+// Builds the key=value pairs appended to the embed script URL.
+//
+// Values are URL-encoded, not HTML-escaped: these become query-string parameters, so a
+// value containing '&' or '#' would otherwise start a new parameter or truncate the URL
+// at a fragment. A filter of "Instagram,#tbt" silently dropped every parameter after it.
 function generate_attributes($array) {
     $attrs = array();
 
@@ -85,15 +137,13 @@ function generate_attributes($array) {
         if ($key == 'name') {
             continue;
         }
-        $escaped_val = htmlspecialchars($val);
-        if (!empty($escaped_val)) {
-            if (strpos($key, "data-") !== false) {
-                $escaped_key = str_replace("data-", "", $key);
-                array_push($attrs, $escaped_key . '=' . $escaped_val);
-            } else {
-                array_push($attrs, $key . '=' . $escaped_val);
-            }
+        // empty() rather than a strict comparison, to keep the long-standing behaviour
+        // that '0' and '' are both omitted from the URL.
+        if (empty($val)) {
+            continue;
         }
+        $clean_key = str_replace('data-', '', $key);
+        array_push($attrs, rawurlencode($clean_key) . '=' . rawurlencode($val));
     }
 
     return $attrs;
@@ -118,7 +168,23 @@ add_shortcode('juicer', 'juicer_shortcode');
 function juicer_activate() {
     // Only set cookie if headers haven't been sent
     if (!headers_sent()) {
-        setcookie('juicer_welcome', 'true', time() + 3600, '/'); // Cookie expires in 1 hour
+        $expires = time() + HOUR_IN_SECONDS;
+        // Deliberately not httponly: the settings page clears this cookie from JavaScript,
+        // and it cannot clear it server-side because the page is rendered long after the
+        // headers are sent. The value is a non-secret first-run flag, so keeping it
+        // readable costs nothing.
+        if (version_compare(PHP_VERSION, '7.3', '>=')) {
+            setcookie('juicer_welcome', 'true', array(
+                'expires' => $expires,
+                'path' => '/',
+                'secure' => is_ssl(),
+                'httponly' => false,
+                'samesite' => 'Lax',
+            ));
+        } else {
+            // The options array, and with it samesite, needs PHP 7.3.
+            setcookie('juicer_welcome', 'true', $expires, '/', '', is_ssl(), false);
+        }
     }
 }
 register_activation_hook(__FILE__, 'juicer_activate');
@@ -187,8 +253,14 @@ function juicer_check_feed_existence() {
             $body = wp_remote_retrieve_body($response);
             $data = json_decode($body, true);
 
+            // json_decode returns null on malformed JSON, and the endpoint is not
+            // guaranteed to answer with a list, so the shape is checked before iterating.
+            if (!is_array($data)) {
+                return;
+            }
+
             foreach ($data as $item) {
-                if (isset($item['feed_id'])) {
+                if (is_array($item) && isset($item['feed_id'])) {
                     // Update the option to true as feed exists
                     update_option('juicer_feed_exists', true);
                     break;
@@ -290,19 +362,39 @@ function enqueue_juicer_elementor_editor_styles() {
 add_action('elementor/frontend/after_enqueue_styles', 'enqueue_juicer_elementor_editor_styles');
 add_action('elementor/editor/after_enqueue_styles', 'enqueue_juicer_elementor_editor_styles');
 
+// The date picker library is bundled with the plugin instead of loaded from a CDN, so
+// wp-admin runs only code shipped in this release: there is no third-party origin to be
+// compromised, to go down, or to see the editor's requests. The two files are
+// daterangepicker 3.1.0 exactly as published on npm (MIT, Dan Grossman), copied verbatim.
+//
+// This replaces a pinned jsDelivr URL guarded by Subresource Integrity, which could not
+// hold: npm publishes no daterangepicker.min.js, so jsDelivr minified one on the fly with
+// Terser. Those bytes -- and so the hash -- change whenever jsDelivr upgrades Terser, and
+// SRI fails closed, so the picker would break in the editor with nothing logged.
 function juicer_register_daterangepicker_assets() {
-    if (wp_script_is('daterangepicker', 'registered')) {
-        return;
+    // Each handle is guarded separately: 'daterangepicker' is a generic name another
+    // plugin may already own, and bailing out wholesale would leave the two Juicer-owned
+    // handles unregistered, silently breaking the picker.
+    if (!wp_script_is('daterangepicker', 'registered')) {
+        wp_register_script('daterangepicker', plugin_dir_url(__FILE__) . 'includes/elementor/daterangepicker.js', array('jquery', 'moment'), JUICER_VERSION, true);
     }
-    wp_register_script('daterangepicker', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', array('jquery', 'moment'), '3.1', true);
-    wp_register_style('daterangepicker-css', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css', array(), '3.1');
-    wp_register_script('juicer-daterangepicker-init', plugin_dir_url(__FILE__) . 'includes/elementor/daterangepicker-init.js', array('jquery', 'daterangepicker'), JUICER_VERSION, true);
+    if (!wp_style_is('daterangepicker-css', 'registered')) {
+        wp_register_style('daterangepicker-css', plugin_dir_url(__FILE__) . 'includes/elementor/daterangepicker.css', array(), JUICER_VERSION);
+    }
+    if (!wp_script_is('juicer-daterangepicker-init', 'registered')) {
+        wp_register_script('juicer-daterangepicker-init', plugin_dir_url(__FILE__) . 'includes/elementor/daterangepicker-init.js', array('jquery', 'daterangepicker'), JUICER_VERSION, true);
+    }
 }
+
+// Editor only: the date picker is a widget-panel control, so the library is never
+// needed on rendered pages. Registering it on the frontend hook too would ship a
+// third-party script to every visitor of a page using the widget.
 add_action('elementor/editor/before_enqueue_scripts', 'juicer_register_daterangepicker_assets');
-add_action('elementor/frontend/before_enqueue_scripts', 'juicer_register_daterangepicker_assets');
 
 function juicer_editor_has_juicer_widget() {
-    if (!isset($_GET['post']) || !function_exists('\Elementor\Plugin::instance')) {
+    // class_exists, not function_exists: function_exists never resolves a static method,
+    // so checking for '\Elementor\Plugin::instance' would always be false.
+    if (!isset($_GET['post']) || !class_exists('\Elementor\Plugin')) {
         return false;
     }
     $post_id = absint($_GET['post']);

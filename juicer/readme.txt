@@ -2,9 +2,10 @@
 Contributors: juicerio
 Tags: social media aggregator, embed social media, Instagram Feed, Social Wall, LinkedIn feed, Bluesky feed, Google Reviews
 Donate link: https://wp.juicer.io
-Requires at least: 3.0
+Requires at least: 4.6
 Tested up to: 7.0
-Stable tag: 1.12.18
+Stable tag: 1.13.0
+Requires PHP: 5.6
 License: GPLv2
 
 Aggregate social media posts, hashtags, and mentions from Instagram, Bluesky, X (Twitter), Facebook, LinkedIn, YouTube, Google Reviews, and more into a stunning feed on your website.
@@ -192,6 +193,17 @@ Make sure that all Javascript errors are resolved.
 
 
 == Changelog ==
+
+= 1.13.0 =
+* Fixed feed attributes being silently dropped when an earlier value contained a comma or a hash. Filters such as filter="Instagram,#tbt" now reach the feed, along with every setting after them. If you worked around this by encoding the value yourself, for example %23 in place of #, remove that encoding.
+* Fixed the settings page failing to load when the Juicer API returned an unexpected response.
+* Stopped loading the date range picker on public pages. It is now loaded only in the Elementor editor, where it is used, which removes two requests from every page that shows the widget.
+* The date range picker library is now bundled with the plugin instead of being loaded from a CDN, so the Elementor editor no longer makes a request to a third-party host.
+* Fixed the Elementor widget's Date Range setting being discarded on save. Choosing a range filled the field but the editor never registered the change, so the value was lost when the page was saved. A saved range is also shown again when the widget is reopened, instead of the field appearing empty.
+* Elementor widget settings are now checked before being added to the shortcode.
+* The "Run JS After Render" setting now needs to be a function call, such as myCallback() or window.MyApp.render(event). A plain function name is still accepted but, as before, does not run anything on its own. Other values are ignored.
+* Improved the security settings of the welcome cookie.
+* Declared the minimum supported versions: WordPress 4.6 and PHP 5.6.
 
 = 1.12.18 =
 * Confirmed compatibility with WordPress 7.0.
